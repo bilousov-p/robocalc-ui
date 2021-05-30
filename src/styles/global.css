@@ -1,0 +1,14 @@
+.main-div {
+    text-align: center;
+    width: 50%;
+    padding: 10px;
+    margin: auto;
+}
+
+.form-group {
+    text-align: left;
+}
+
+.form-element {
+    margin-bottom: 10px;
+}
