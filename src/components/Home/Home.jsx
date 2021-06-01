@@ -1,5 +1,6 @@
-import {FormGroup, Input, Label} from "reactstrap";
+import {Button, FormGroup, Input, Label} from "reactstrap";
 import React, { useState } from 'react';
+import {SERVER_URL} from "../../configs/serverConfig";
 
 const INITIAL_FORM_MAIN_STATE = {
     shapeOfArea: 'PARALLELP',
@@ -137,6 +138,30 @@ const Home = () => {
         }
     }
 
+    const isMainFormValid = () => {
+        const mainFormKeys = Object.keys(formMainState);
+        return mainFormKeys.length === 4 && mainFormKeys.every(key => formMainState[key] !== '');
+    };
+
+    const isAdditionalParamsFormValid = () => {
+        if (formMainState.fieldOfUse === 'WELD') {
+            const additionalFormKeys = Object.keys(formAdditionalParamsState);
+            return additionalFormKeys.length === 4 && additionalFormKeys.every(key => formAdditionalParamsState[key] !== '');
+        }
+
+        return true;
+    };
+
+    const isFormValid = () => isMainFormValid() && isAdditionalParamsFormValid();
+
+    const calculateParameters = () => {
+       fetch(SERVER_URL + '/calc/calculateParams', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ ...formMainState, weldParams: formAdditionalParamsState })
+       }).then(r => console.log('Got it!'))
+    }
+
     return (
         <div className="main-div">
             <div className="form-div">
@@ -158,7 +183,10 @@ const Home = () => {
                            name="fieldOfUseSelect"
                            id="fieldOfUse"
                            className="form-element"
-                           onChange={({ target: { id, value }}) => updateFormMainState(id, value)}>
+                           onChange={({ target: { id, value }}) => {
+                               updateFormMainState(id, value);
+                               setFormAdditionalParamsState({});
+                           }}>
                         {getOptions(fieldOfUseOptionsData)}
                     </Input>
                 </FormGroup>
@@ -173,6 +201,9 @@ const Home = () => {
                 {getAdditionalField()}
             </div>
             {getFormWithAdditionalParams()}
+            <div className="button-wrapper">
+                <Button disabled={!isFormValid()} color="primary" onClick={calculateParameters}>Розрахувати</Button>
+            </div>
         </div>
     )
 }
