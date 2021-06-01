@@ -46,6 +46,7 @@ const getOptions = optionsData => optionsData.map(option =>
 const Home = () => {
 
     const [formMainState, setFormMainState] = useState(INITIAL_FORM_MAIN_STATE);
+    const [formAdditionalParamsState, setFormAdditionalParamsState] = useState({});
 
     const getAdditionalField = () => {
         if (formMainState.fieldOfUse === 'MOVE') {
@@ -55,7 +56,7 @@ const Home = () => {
                     <Input type="number"
                            name="cargoCapacity"
                            id="cargoCapacity"
-                           onChange={({ target: { id, value }}) => updateFormState(id, value)} />
+                           onChange={({ target: { id, value }}) => updateFormMainState(id, value)} />
                 </FormGroup>
             )
         } else {
@@ -65,15 +66,65 @@ const Home = () => {
                     <Input type="number"
                            name="cargoCapacity"
                            id="cargoCapacity"
-                           onChange={({ target: { id, value }}) => updateFormState(id, value)} />
+                           onChange={({ target: { id, value }}) => updateFormMainState(id, value)} />
                 </FormGroup>
             )
         }
     };
 
+    const updateFormMainState = (fieldId, value) => {
+        const stateCopy = { ...formMainState };
+
+        setFormMainState({
+            ...stateCopy,
+            [fieldId]: value,
+        })
+    }
+
+    const updateFormAdditionalState = (fieldId, value) => {
+        const stateCopy = { ...formAdditionalParamsState };
+
+        setFormAdditionalParamsState({
+            ...stateCopy,
+            [fieldId]: value,
+        })
+    }
+
+
     const getFieldsForWeldParameters = () => (
         <div className="form-div">
             <h6>Параметри робочого елементу</h6>
+            <FormGroup className="form-group">
+                <Label for="voltage">Напруга мережі (В):</Label>
+                <Input type="number"
+                       name="voltage"
+                       id="voltage"
+                       className="form-element"
+                       onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
+            </FormGroup>
+            <FormGroup className="form-group">
+                <Label for="secondCoilVoltage">Напруга на вторинній обмотці (В):</Label>
+                <Input type="number"
+                       name="secondCoilVoltage"
+                       id="secondCoilVoltage"
+                       className="form-element"
+                       onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
+            </FormGroup>
+            <FormGroup className="form-group">
+                <Label for="amperage">Сила струму (А):</Label>
+                <Input type="number"
+                       name="amperage"
+                       id="amperage"
+                       className="form-element"
+                       onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
+            </FormGroup>
+            <FormGroup className="form-group">
+                <Label for="currentDensity">Щільність струму (А/мм<sup>2</sup>):</Label>
+                <Input type="number"
+                       name="currentDensity"
+                       id="currentDensity"
+                       onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
+            </FormGroup>
         </div>
     )
 
@@ -86,17 +137,6 @@ const Home = () => {
         }
     }
 
-    const updateFormState = (fieldId, value) => {
-        const stateCopy = { ...formMainState };
-
-        setFormMainState({
-            ...stateCopy,
-            [fieldId]: value,
-        })
-    }
-
-    console.log('formState', formMainState);
-
     return (
         <div className="main-div">
             <div className="form-div">
@@ -108,7 +148,7 @@ const Home = () => {
                            id="shapeOfArea"
                            className="form-element"
                            defaultValue=''
-                           onChange={({ target: { id, value }}) => updateFormState(id, value)}>
+                           onChange={({ target: { id, value }}) => updateFormMainState(id, value)}>
                         {getOptions(shapeOptionsData)}
                     </Input>
                 </FormGroup>
@@ -118,7 +158,7 @@ const Home = () => {
                            name="fieldOfUseSelect"
                            id="fieldOfUse"
                            className="form-element"
-                           onChange={({ target: { id, value }}) => updateFormState(id, value)}>
+                           onChange={({ target: { id, value }}) => updateFormMainState(id, value)}>
                         {getOptions(fieldOfUseOptionsData)}
                     </Input>
                 </FormGroup>
@@ -128,7 +168,7 @@ const Home = () => {
                            name="reachZone"
                            id="reachZone"
                            className="form-element"
-                           onChange={({ target: { id, value }}) => updateFormState(id, value)} />
+                           onChange={({ target: { id, value }}) => updateFormMainState(id, value)} />
                 </FormGroup>
                 {getAdditionalField()}
             </div>
