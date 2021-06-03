@@ -124,6 +124,22 @@ const Home = () => {
                 <Input type="number"
                        name="currentDensity"
                        id="currentDensity"
+                       className="form-element"
+                       onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
+            </FormGroup>
+            <FormGroup className="form-group">
+                <Label for="coreSection">Перетин сердечника (см<sup>2</sup>):</Label>
+                <Input type="number"
+                       name="coreSection"
+                       id="coreSection"
+                       className="form-element"
+                       onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
+            </FormGroup>
+            <FormGroup className="form-group">
+                <Label for="coreWindowSection">Площа викна сердечника (см<sup>2</sup>):</Label>
+                <Input type="number"
+                       name="coreWindowSection"
+                       id="coreWindowSection"
                        onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
             </FormGroup>
         </div>
@@ -146,7 +162,7 @@ const Home = () => {
     const isAdditionalParamsFormValid = () => {
         if (formMainState.fieldOfUse === 'WELD') {
             const additionalFormKeys = Object.keys(formAdditionalParamsState);
-            return additionalFormKeys.length === 4 && additionalFormKeys.every(key => formAdditionalParamsState[key] !== '');
+            return additionalFormKeys.length === 6 && additionalFormKeys.every(key => formAdditionalParamsState[key] !== '');
         }
 
         return true;
@@ -158,7 +174,7 @@ const Home = () => {
        fetch(SERVER_URL + '/calc/calculateParams', {
            method: 'POST',
            headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({ ...formMainState, weldParams: formAdditionalParamsState })
+           body: JSON.stringify({ ...formMainState, inputWeldParams: formAdditionalParamsState })
        }).then(r => console.log('Got it!'))
     }
 
