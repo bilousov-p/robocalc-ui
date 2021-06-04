@@ -1,4 +1,4 @@
-import {Table} from "reactstrap";
+import {Button, Table} from "reactstrap";
 import {useEffect, useState} from "react";
 import {SERVER_URL} from "../../configs/serverConfig";
 import {Link} from "react-router-dom";
@@ -65,6 +65,9 @@ const Home = () => {
                 {generateTableBody()}
                 </tbody>
             </Table>
+            <div className="main-div">
+                <Link to={'/new'}><Button color="primary">+ Новий розрахунок</Button></Link>
+            </div>
         </div>
     )
 }

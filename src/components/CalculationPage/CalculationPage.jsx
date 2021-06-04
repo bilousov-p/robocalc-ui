@@ -1,11 +1,12 @@
-import { useParams } from "react-router-dom";
+import {Link, useHistory, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {SERVER_URL} from "../../configs/serverConfig";
 import {fieldOfUseLabels, shapeLabels} from "../../constant/optionsConstants";
-import {Spinner} from "reactstrap";
+import {Button, Spinner} from "reactstrap";
 
 const CalculationPage = () => {
 
+    const history = useHistory();
     const { calculationId } = useParams();
     const [calculatedData, setCalculatedData] = useState({});
 
@@ -15,6 +16,13 @@ const CalculationPage = () => {
             headers: { 'Content-Type': 'application/json' },
         }).then(response => response.json()).then(data => setCalculatedData(data))
     }, [])
+
+    const deleteCurrentCalculation = () => {
+        fetch(SERVER_URL + '/calc/delete/' + calculationId, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+        }).then(() => history.push('/'));
+    }
 
     const { inputParams = {}, engineParams = {}, manipulatorParams = {}, weldParams } = calculatedData;
 
@@ -64,6 +72,10 @@ const CalculationPage = () => {
                                 <div><b>Перетин витків у другому контурі: </b>{weldParams.secondWireSection} мм<sup>2</sup></div>
                             </>
                         ) : null}
+                    </div>
+                    <div className="button-wrapper">
+                        <Link style={{margin : '15px'}}  to={''}><Button outline color="secondary">Назад</Button></Link>
+                        <Button color="danger" onClick={deleteCurrentCalculation}>Видалити</Button>
                     </div>
                 </>
             ) : <Spinner />}

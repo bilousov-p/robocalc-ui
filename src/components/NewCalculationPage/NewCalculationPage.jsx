@@ -1,6 +1,7 @@
 import {Button, FormGroup, Input, Label} from "reactstrap";
 import React, { useState } from 'react';
 import {SERVER_URL} from "../../configs/serverConfig";
+import { Link, useHistory } from "react-router-dom";
 
 const INITIAL_FORM_MAIN_STATE = {
     shapeOfArea: 'PARALLELP',
@@ -45,6 +46,8 @@ const getOptions = optionsData => optionsData.map(option =>
     <option key={option.value} value={option.value}>{option.label}</option>);
 
 const NewCalculationPage = () => {
+
+    const history = useHistory();
 
     const [formMainState, setFormMainState] = useState(INITIAL_FORM_MAIN_STATE);
     const [formAdditionalParamsState, setFormAdditionalParamsState] = useState({});
@@ -175,7 +178,7 @@ const NewCalculationPage = () => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ...formMainState, inputWeldParams: formAdditionalParamsState })
-        }).then(r => console.log('Got it!'))
+        }).then(r => r.json()).then(({ id }) => history.push('/calculation/' + id))
     }
 
     return (
@@ -218,6 +221,7 @@ const NewCalculationPage = () => {
             </div>
             {getFormWithAdditionalParams()}
             <div className="button-wrapper">
+                <Link style={{margin : '15px'}}  to={''}><Button outline color="secondary">Назад</Button></Link>
                 <Button disabled={!isFormValid()} color="primary" onClick={calculateParameters}>Розрахувати</Button>
             </div>
         </div>
