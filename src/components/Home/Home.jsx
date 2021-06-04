@@ -1,225 +1,79 @@
-import {Button, FormGroup, Input, Label} from "reactstrap";
-import React, { useState } from 'react';
+import {Table} from "reactstrap";
+import {useEffect, useState} from "react";
 import {SERVER_URL} from "../../configs/serverConfig";
 
-const INITIAL_FORM_MAIN_STATE = {
-    shapeOfArea: 'PARALLELP',
-    fieldOfUse: 'OTHER',
-};
+const fieldOfUseLabels = {
+    MOVE: 'Пересування',
+    WELD: 'Зварювання',
+    OTHER: 'Інше',
+}
 
-const shapeOptionsData = [
-    {
-        label: 'Паралелепіпед',
-        value: 'PARALLELP',
-    },
-    {
-        label: 'Циліндр',
-        value: 'CYLINDER',
-    },
-    {
-        label: 'Неповний шар',
-        value: 'PART_OF_SPHERE',
-    },
-    {
-        label: 'Сложний шаровий простір',
-        value: 'COMPLEX_SPHERE',
-    },
-];
-
-const fieldOfUseOptionsData = [
-    {
-        label: 'Інше',
-        value: 'OTHER',
-    },
-    {
-        label: 'Пересування',
-        value: 'MOVE',
-    },
-    {
-        label: 'Зварювання',
-        value: 'WELD',
-    },
-];
-
-const getOptions = optionsData => optionsData.map(option =>
-    <option key={option.value} value={option.value}>{option.label}</option>);
+const shapeLabels = {
+    PARALLELP: 'Паралелепіпед',
+    CYLINDER: 'Циліндр',
+    PART_OF_SPHERE: 'Неповний шар',
+    COMPLEX_SPHERE: 'Сложний шаровий простір',
+}
 
 const Home = () => {
 
-    const [formMainState, setFormMainState] = useState(INITIAL_FORM_MAIN_STATE);
-    const [formAdditionalParamsState, setFormAdditionalParamsState] = useState({});
+    const [tableData, setTableData] = useState([]);
 
-    const getAdditionalField = () => {
-        if (formMainState.fieldOfUse === 'MOVE') {
+    useEffect(() => {
+        fetch(SERVER_URL + '/calc/getAll', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        }).then(response => response.json()).then(data => setTableData(data))
+    }, []);
+
+    const getTableHead = () => {
+        return (
+            <thead>
+                <tr>
+                    <th className="t-head-colored">ID</th>
+                    <th className="t-head-colored">Сфера застосування</th>
+                    <th className="t-head-colored">Досяжність</th>
+                    <th className="t-head-colored">Корисне навантаження</th>
+                    <th className="t-head-colored">Форма робочої зони</th>
+                    <th className="t-head-colored">Напруга мережі</th>
+                    <th className="t-head-colored">Напруга на вторинній обмотці</th>
+                    <th className="t-head-colored">Сила струму</th>
+                    <th className="t-head-colored">Щільність струму</th>
+                    <th className="t-head-colored">Перетин сердечника</th>
+                    <th className="t-head-colored">Площа викна сердечника</th>
+                </tr>
+            </thead>
+        )
+    }
+
+    const generateTableBody = () => {
+        return tableData.map(({ inputParams }) => {
             return (
-                <FormGroup className="form-group">
-                    <Label for="cargoCapacity">Корисне навантаження (кг):</Label>
-                    <Input type="number"
-                           name="cargoCapacity"
-                           id="cargoCapacity"
-                           onChange={({ target: { id, value }}) => updateFormMainState(id, value)} />
-                </FormGroup>
+                <tr key={inputParams.id}>
+                    <td>{inputParams.id}</td>
+                    <td>{fieldOfUseLabels[inputParams.fieldOfUse]}</td>
+                    <td>{inputParams.reachZone}</td>
+                    <td>{inputParams.cargoCapacity}</td>
+                    <td>{shapeLabels[inputParams.shapeOfArea]}</td>
+                    <td>{inputParams.inputWeldParams.voltage}</td>
+                    <td>{inputParams.inputWeldParams.secondCoilVoltage}</td>
+                    <td>{inputParams.inputWeldParams.amperage}</td>
+                    <td>{inputParams.inputWeldParams.currentDensity}</td>
+                    <td>{inputParams.inputWeldParams.coreSection}</td>
+                    <td>{inputParams.inputWeldParams.coreWindowSection}</td>
+                </tr>
             )
-        } else {
-            return (
-                <FormGroup className="form-group">
-                    <Label for="cargoCapacity">Вага робочго елементу (кг):</Label>
-                    <Input type="number"
-                           name="cargoCapacity"
-                           id="cargoCapacity"
-                           onChange={({ target: { id, value }}) => updateFormMainState(id, value)} />
-                </FormGroup>
-            )
-        }
-    };
-
-    const updateFormMainState = (fieldId, value) => {
-        const stateCopy = { ...formMainState };
-
-        setFormMainState({
-            ...stateCopy,
-            [fieldId]: value,
         })
-    }
-
-    const updateFormAdditionalState = (fieldId, value) => {
-        const stateCopy = { ...formAdditionalParamsState };
-
-        setFormAdditionalParamsState({
-            ...stateCopy,
-            [fieldId]: value,
-        })
-    }
-
-
-    const getFieldsForWeldParameters = () => (
-        <div className="form-div">
-            <h6>Параметри робочого елементу</h6>
-            <FormGroup className="form-group">
-                <Label for="voltage">Напруга мережі (В):</Label>
-                <Input type="number"
-                       name="voltage"
-                       id="voltage"
-                       className="form-element"
-                       onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
-            </FormGroup>
-            <FormGroup className="form-group">
-                <Label for="secondCoilVoltage">Напруга на вторинній обмотці (В):</Label>
-                <Input type="number"
-                       name="secondCoilVoltage"
-                       id="secondCoilVoltage"
-                       className="form-element"
-                       onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
-            </FormGroup>
-            <FormGroup className="form-group">
-                <Label for="amperage">Сила струму (А):</Label>
-                <Input type="number"
-                       name="amperage"
-                       id="amperage"
-                       className="form-element"
-                       onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
-            </FormGroup>
-            <FormGroup className="form-group">
-                <Label for="currentDensity">Щільність струму (А/мм<sup>2</sup>):</Label>
-                <Input type="number"
-                       name="currentDensity"
-                       id="currentDensity"
-                       className="form-element"
-                       onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
-            </FormGroup>
-            <FormGroup className="form-group">
-                <Label for="coreSection">Перетин сердечника (см<sup>2</sup>):</Label>
-                <Input type="number"
-                       name="coreSection"
-                       id="coreSection"
-                       className="form-element"
-                       onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
-            </FormGroup>
-            <FormGroup className="form-group">
-                <Label for="coreWindowSection">Площа викна сердечника (см<sup>2</sup>):</Label>
-                <Input type="number"
-                       name="coreWindowSection"
-                       id="coreWindowSection"
-                       onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
-            </FormGroup>
-        </div>
-    )
-
-    const getFormWithAdditionalParams = () => {
-        switch (formMainState.fieldOfUse) {
-            case 'WELD':
-                return getFieldsForWeldParameters();
-            default:
-                return null;
-        }
-    }
-
-    const isMainFormValid = () => {
-        const mainFormKeys = Object.keys(formMainState);
-        return mainFormKeys.length === 4 && mainFormKeys.every(key => formMainState[key] !== '');
-    };
-
-    const isAdditionalParamsFormValid = () => {
-        if (formMainState.fieldOfUse === 'WELD') {
-            const additionalFormKeys = Object.keys(formAdditionalParamsState);
-            return additionalFormKeys.length === 6 && additionalFormKeys.every(key => formAdditionalParamsState[key] !== '');
-        }
-
-        return true;
-    };
-
-    const isFormValid = () => isMainFormValid() && isAdditionalParamsFormValid();
-
-    const calculateParameters = () => {
-       fetch(SERVER_URL + '/calc/calculateParams', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({ ...formMainState, inputWeldParams: formAdditionalParamsState })
-       }).then(r => console.log('Got it!'))
     }
 
     return (
-        <div className="main-div">
-            <div className="form-div">
-                <h6>Основні параметри ПР</h6>
-                <FormGroup className="form-group">
-                    <Label for="shapeOfArea">Форма робочої зони:</Label>
-                    <Input type="select"
-                           name="shapeOfAreaSelect"
-                           id="shapeOfArea"
-                           className="form-element"
-                           defaultValue=''
-                           onChange={({ target: { id, value }}) => updateFormMainState(id, value)}>
-                        {getOptions(shapeOptionsData)}
-                    </Input>
-                </FormGroup>
-                <FormGroup className="form-group">
-                    <Label for="fieldOfUse">Сфера застосування:</Label>
-                    <Input type="select"
-                           name="fieldOfUseSelect"
-                           id="fieldOfUse"
-                           className="form-element"
-                           onChange={({ target: { id, value }}) => {
-                               updateFormMainState(id, value);
-                               setFormAdditionalParamsState({});
-                           }}>
-                        {getOptions(fieldOfUseOptionsData)}
-                    </Input>
-                </FormGroup>
-                <FormGroup className="form-group">
-                    <Label for="reachZone">Досяжність (см):</Label>
-                    <Input type="number"
-                           name="reachZone"
-                           id="reachZone"
-                           className="form-element"
-                           onChange={({ target: { id, value }}) => updateFormMainState(id, value)} />
-                </FormGroup>
-                {getAdditionalField()}
-            </div>
-            {getFormWithAdditionalParams()}
-            <div className="button-wrapper">
-                <Button disabled={!isFormValid()} color="primary" onClick={calculateParameters}>Розрахувати</Button>
-            </div>
+        <div className="table-wrapper">
+            <Table striped hover>
+                {getTableHead()}
+                <tbody>
+                {generateTableBody()}
+                </tbody>
+            </Table>
         </div>
     )
 }

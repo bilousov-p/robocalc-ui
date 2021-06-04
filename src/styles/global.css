@@ -26,3 +26,11 @@
 .button-wrapper {
     margin-top: 20px;
 }
+
+.table-wrapper {
+    margin: 50px 10px;
+}
+
+.t-head-colored {
+    color: #0074d9;
+}
