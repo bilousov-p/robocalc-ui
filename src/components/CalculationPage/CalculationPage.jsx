@@ -10,6 +10,7 @@ const CalculationPage = () => {
     const { calculationId } = useParams();
     const [calculatedData, setCalculatedData] = useState({});
 
+    // TODO: Refactor fetchs
     useEffect(() => {
         fetch(SERVER_URL + '/calc/getById/' + calculationId, {
             method: 'GET',
@@ -26,6 +27,7 @@ const CalculationPage = () => {
 
     const { inputParams = {}, engineParams = {}, manipulatorParams = {}, weldParams } = calculatedData;
 
+    // TODO: Refactor <div><b> to component
     return (
         <div className="main-div">
             {calculatedData.inputParams ? (

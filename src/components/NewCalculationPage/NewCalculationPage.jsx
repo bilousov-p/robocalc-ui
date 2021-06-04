@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import {SERVER_URL} from "../../configs/serverConfig";
 import { Link, useHistory } from "react-router-dom";
 
+// TODO: Move to constants
 const INITIAL_FORM_MAIN_STATE = {
     shapeOfArea: 'PARALLELP',
     fieldOfUse: 'OTHER',
@@ -181,6 +182,7 @@ const NewCalculationPage = () => {
         }).then(r => r.json()).then(({ id }) => history.push('/calculation/' + id))
     }
 
+    // TODO: Refactor FormGroup to Component
     return (
         <div className="main-div">
             <div className="form-div">
