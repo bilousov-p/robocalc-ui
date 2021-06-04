@@ -1,19 +1,8 @@
 import {Table} from "reactstrap";
 import {useEffect, useState} from "react";
 import {SERVER_URL} from "../../configs/serverConfig";
-
-const fieldOfUseLabels = {
-    MOVE: 'Пересування',
-    WELD: 'Зварювання',
-    OTHER: 'Інше',
-}
-
-const shapeLabels = {
-    PARALLELP: 'Паралелепіпед',
-    CYLINDER: 'Циліндр',
-    PART_OF_SPHERE: 'Неповний шар',
-    COMPLEX_SPHERE: 'Сложний шаровий простір',
-}
+import {Link} from "react-router-dom";
+import {fieldOfUseLabels, shapeLabels} from "../../constant/optionsConstants";
 
 const Home = () => {
 
@@ -41,6 +30,7 @@ const Home = () => {
                     <th className="t-head-colored">Щільність струму</th>
                     <th className="t-head-colored">Перетин сердечника</th>
                     <th className="t-head-colored">Площа викна сердечника</th>
+                    <th className="t-head-colored"></th>
                 </tr>
             </thead>
         )
@@ -55,12 +45,13 @@ const Home = () => {
                     <td>{inputParams.reachZone}</td>
                     <td>{inputParams.cargoCapacity}</td>
                     <td>{shapeLabels[inputParams.shapeOfArea]}</td>
-                    <td>{inputParams.inputWeldParams.voltage}</td>
-                    <td>{inputParams.inputWeldParams.secondCoilVoltage}</td>
-                    <td>{inputParams.inputWeldParams.amperage}</td>
-                    <td>{inputParams.inputWeldParams.currentDensity}</td>
-                    <td>{inputParams.inputWeldParams.coreSection}</td>
-                    <td>{inputParams.inputWeldParams.coreWindowSection}</td>
+                    <td>{inputParams.inputWeldParams.voltage || '-'}</td>
+                    <td>{inputParams.inputWeldParams.secondCoilVoltage || '-'}</td>
+                    <td>{inputParams.inputWeldParams.amperage || '-'}</td>
+                    <td>{inputParams.inputWeldParams.currentDensity || '-'}</td>
+                    <td>{inputParams.inputWeldParams.coreSection || '-'}</td>
+                    <td>{inputParams.inputWeldParams.coreWindowSection || '-'}</td>
+                    <td><Link to={`/calculation/${inputParams.id}`}>Розрахунки</Link></td>
                 </tr>
             )
         })
