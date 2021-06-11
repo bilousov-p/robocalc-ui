@@ -140,7 +140,7 @@ const NewCalculationPage = () => {
                        onChange={({ target: { id, value }}) => updateFormAdditionalState(id, value)} />
             </FormGroup>
             <FormGroup className="form-group">
-                <Label for="coreWindowSection">Площа викна сердечника (см<sup>2</sup>):</Label>
+                <Label for="coreWindowSection">Площа вікна сердечника (см<sup>2</sup>):</Label>
                 <Input type="number"
                        name="coreWindowSection"
                        id="coreWindowSection"
