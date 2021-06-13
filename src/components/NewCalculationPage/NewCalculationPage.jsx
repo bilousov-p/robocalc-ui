@@ -23,7 +23,7 @@ const shapeOptionsData = [
         value: 'PART_OF_SPHERE',
     },
     {
-        label: 'Сложний шаровий простір',
+        label: 'Складний шаровий простір',
         value: 'COMPLEX_SPHERE',
     },
 ];
